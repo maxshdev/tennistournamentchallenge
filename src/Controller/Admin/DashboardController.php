@@ -9,6 +9,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+use App\Entity\Tournament;
+use App\Entity\Division;
 use App\Entity\Player;
 
 use App\Controller\Admin\PlayerCrudController;
@@ -33,7 +35,9 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linktoDashboard('Home', 'fa fa-home');
         
-        yield MenuItem::subMenu('Tournament', 'fa fa-list')->setSubItems([
+        yield MenuItem::subMenu('Inscriptions', 'fa fa-list')->setSubItems([
+            MenuItem::linkToCrud('Tournament', 'fas fa-cash-register', Tournament::class),
+            MenuItem::linkToCrud('Divisions', 'fas fa-cash-register', Division::class),
             MenuItem::linkToCrud('Players', 'fas fa-cash-register', Player::class),
         ]);
     }

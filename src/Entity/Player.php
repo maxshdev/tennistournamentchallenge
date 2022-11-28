@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PlayerRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 
@@ -32,6 +34,19 @@ class Player
 
     #[ORM\Column(nullable: true)]
     private ?int $reaction_time = null;
+
+    #[ORM\ManyToMany(targetEntity: Tournament::class, mappedBy: 'players')]
+    private Collection $tournaments;
+
+    public function __construct()
+    {
+        $this->tournaments = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->name . ' - ' . $this->sex;
+    }
 
     public function getId(): ?int
     {
@@ -106,6 +121,33 @@ class Player
     public function setReactionTime(?int $reaction_time): self
     {
         $this->reaction_time = $reaction_time;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tournament>
+     */
+    public function getTournaments(): Collection
+    {
+        return $this->tournaments;
+    }
+
+    public function addTournament(Tournament $tournament): self
+    {
+        if (!$this->tournaments->contains($tournament)) {
+            $this->tournaments->add($tournament);
+            $tournament->addPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTournament(Tournament $tournament): self
+    {
+        if ($this->tournaments->removeElement($tournament)) {
+            $tournament->removePlayer($this);
+        }
 
         return $this;
     }
