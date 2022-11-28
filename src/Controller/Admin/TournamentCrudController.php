@@ -78,8 +78,21 @@ class TournamentCrudController extends AbstractCrudController
             $player_winner = $players_of_division[array_rand($players_of_division, 1)];
 
             $division->setWinner($player_winner);
+            $winners[] = $player_winner;
 
             $em->persist($division);
+        }
+
+        $divisions_quarter = $em->getRepository(Division::class)->findBy(['tournament' => $tournament->getId(), 'phase' => 'quarter finals']);
+
+        foreach ($divisions_quarter as $division) {
+            
+            $division->addTuple($winners[0]);
+            $division->addTuple($winners[1]);
+
+            $em->persist($division);
+
+            $winners = array_slice($winners, 2);
         }
 
         $em->flush();
